@@ -54,7 +54,7 @@ class D1Driver implements Driver {
 
   async acquireConnection(): Promise<DatabaseConnection> {
     const apiClient = new D1Api(this.#config.apiKey, this.#config.accountId);
-    const database = await apiClient.databseFromName(this.#config.databaseName);
+    const database = await apiClient.databaseFromName(this.#config.databaseName);
 
     if (!database) {
       throw new Error(`Database ${this.#config.databaseName} not found`);

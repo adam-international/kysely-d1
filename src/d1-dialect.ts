@@ -11,6 +11,7 @@ import {
   QueryCompiler,
   QueryResult,
 } from 'kysely';
+import type { D1Database } from '@cloudflare/workers-types';
 
 /**
  * Config for the D1 dialect. Pass your D1 instance to this object that you bound in `wrangler.toml`.
@@ -106,10 +107,17 @@ class D1Connection implements DatabaseConnection {
       throw new Error(results.error);
     }
 
+    const numAffectedRows = results.meta.changes > 0 ? BigInt(results.meta.changes) : undefined;
+
     return {
-      insertId: results.lastRowId !== null ? BigInt(results.lastRowId) : undefined,
+      insertId:
+        results.meta.last_row_id === undefined || results.meta.last_row_id === null
+          ? undefined
+          : BigInt(results.meta.last_row_id),
       rows: (results?.results as O[]) || [],
-      numUpdatedOrDeletedRows: results.changes > 0 ? BigInt(results.changes) : undefined,
+      numAffectedRows,
+      // @ts-ignore deprecated in kysely >= 0.23, keep for backward compatibility.
+      numUpdatedOrDeletedRows: numAffectedRows,
     };
   }
 

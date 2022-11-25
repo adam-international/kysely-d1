@@ -1,3 +1,5 @@
+import { Headers, Request, RequestInit, URLSearchParams, fetch } from "@cloudflare/workers-types";
+
 const BASE_URL = 'https://api.cloudflare.com/client/v4';
 
 export class D1Api {
@@ -41,7 +43,7 @@ export class D1Api {
     return databases;
   }
 
-  async databseFromName(name: string) {
+  async databaseFromName(name: string) {
     const allDBs = await this.listDatabases();
     const matchingDB = allDBs.find((db: { uuid: string; name: string }) => db.name === name);
     return matchingDB ?? null;
